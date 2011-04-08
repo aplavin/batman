@@ -1,6 +1,68 @@
 ﻿<Window x:Class="BatMan.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid></Grid>
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        Title="BatMan" Height="113" Width="218" ResizeMode="NoResize" WindowStyle="ToolWindow" Left="-1000" Top="-1000">
+
+
+    <Window.Background>
+        <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+            <GradientStop Color="Gray" Offset="0" />
+            <GradientStop Color="WhiteSmoke" Offset="1" />
+        </LinearGradientBrush>
+    </Window.Background>
+
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo ThumbnailClipMargin="3, 5, 10, 7"></TaskbarItemInfo>
+    </Window.TaskbarItemInfo>
+
+    <Grid Name="MainGrid">
+        <tb:TaskbarIcon Name="TrayIcon" IconSource="battery.ico">
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Профили электропитания">
+                        <MenuItem Name="p0" Tag="SCHEME_MAX" Header="Экономия энергии" Click="SetProfile"/>
+                        <MenuItem Name="p1" Tag="SCHEME_BALANCED" Header="Сбалансированный" Click="SetProfile"/>
+                        <MenuItem Name="p2" Tag="SCHEME_MIN" Header="Высокая производительность" Click="SetProfile"/>
+                    </MenuItem>
+                    <MenuItem Name="AutoProfile" Header="Автоматическое переключение профилей" IsCheckable="True"/>
+                    <Separator/>
+                    <MenuItem Header="Отображение на панели задач">
+                        <MenuItem Name="i0" Tag="0" Header="Всегда" Click="SetTaskbarShow"/>
+                        <MenuItem Name="i1" Tag="1" Header="От батареи" IsChecked="True" Click="SetTaskbarShow"/>
+                        <MenuItem Name="i2" Tag="2" Header="От сети" Click="SetTaskbarShow"/>
+                        <MenuItem Name="i3" Tag="3" Header="Никогда" Click="SetTaskbarShow"/>
+                    </MenuItem>
+                    <MenuItem Header="Время между обновлениями">
+                        <MenuItem Name="t0" Tag="1" Header="1 секунда" Click="SetTime"/>
+                        <MenuItem Name="t1" Tag="5" Header="5 секунд" IsChecked="True" Click="SetTime"/>
+                        <MenuItem Name="t2" Tag="10" Header="10 секунд" Click="SetTime"/>
+                        <MenuItem Name="t3" Tag="30" Header="30 секунд" Click="SetTime"/>
+                        <MenuItem Name="t4" Tag="60" Header="1 минута" Click="SetTime"/>
+                    </MenuItem>
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+            <tb:TaskbarIcon.TrayToolTip>
+                <Border
+                    Background="White"
+                    BorderBrush="Orange"
+                    BorderThickness="5"
+                    CornerRadius="4"
+                    Opacity="0.9">
+                    <Grid Background="AliceBlue">
+                        <Label HorizontalAlignment="Left" Name="PercentLabelTray" VerticalAlignment="Top" Content="Заряд: --%" FontSize="14"/>
+                        <Label HorizontalAlignment="Left" Margin="0,18,0,0" Name="TimeLabelTray" VerticalAlignment="Top" Content="Оставшееся время: --:--" FontSize="14"/>
+                        <Label HorizontalAlignment="Left" Margin="0,35,0,0" Name="CapacityLabelTray" VerticalAlignment="Top" Content="Ёмкость: --.- Вт*ч из --.- Вт*ч" FontSize="14"/>
+                        <Label HorizontalAlignment="Left" Margin="0,53,0,0" Name="PowerLabelTray" VerticalAlignment="Top" Content="Разрядка: --.- Вт" FontSize="14"/>
+                        <Label HorizontalAlignment="Left" Margin="0,70,0,0" Name="label" VerticalAlignment="Top" Content="" FontSize="14"/>
+                    </Grid>
+                </Border>
+            </tb:TaskbarIcon.TrayToolTip>
+        </tb:TaskbarIcon>
+
+        <Label HorizontalAlignment="Left" Name="PercentLabel" VerticalAlignment="Top" Content="Заряд: --%" FontSize="14"/>
+        <Label HorizontalAlignment="Left" Margin="0,18,0,0" Name="TimeLabel" VerticalAlignment="Top" Content="Оставшееся время: --:--" FontSize="14"/>
+        <Label HorizontalAlignment="Left" Margin="0,35,0,0" Name="CapacityLabel" VerticalAlignment="Top" Content="Ёмкость: --.- Вт*ч из --.- Вт*ч" FontSize="14"/>
+        <Label HorizontalAlignment="Left" Margin="0,53,0,0" Name="PowerLabel" VerticalAlignment="Top" Content="Разрядка: --.- Вт" FontSize="14"/>
+    </Grid>
 </Window>

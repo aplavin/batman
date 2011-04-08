@@ -3,6 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
     </Application.Resources>
+
+    <JumpList.JumpList>
+        <JumpList>
+            <JumpTask Title="Экономия энергии" IconResourcePath="energy.ico" ApplicationPath="powercfg" Arguments="-s SCHEME_MAX"/>
+            <JumpTask Title="Сбалансированный" IconResourcePath="energy.ico" ApplicationPath="powercfg" Arguments="-s SCHEME_BALANCED"/>
+            <JumpTask Title="Высокая производительность" IconResourcePath="energy.ico" ApplicationPath="powercfg" Arguments="-s SCHEME_MIN"/>
+        </JumpList>
+    </JumpList.JumpList>
 </Application>

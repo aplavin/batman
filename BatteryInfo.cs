@@ -1,7 +1,16 @@
 ﻿
 using System;
 using System.Management;
+using System.Threading;
+using ReflectionFacade;
 using System.Reflection;
+using System.Windows.Forms;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
 
 namespace BatMan
 {
@@ -12,7 +21,15 @@ namespace BatMan
         private static ManagementObject BatteryFullChargedCapacity;
         private static ManagementObject BatteryStaticData;
 
+        private static readonly int OffPercent = 5;
+
         static BatteryInfo()
+        {
+            //Update(null);
+            //Timer t = new Timer(Update, null, 0, 5000);
+        }
+
+        public static void Update(object state)
         {
             var scope = new ManagementScope("\\\\.\\root\\WMI");
             scope.Connect();
@@ -24,7 +41,8 @@ namespace BatMan
                 {
                     foreach (ManagementObject queryObj in searcher.Get())
                     {
-                        typeof(BatteryInfo).GetField(className, BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, queryObj);
+                        Reflector.StaticSetField(typeof(BatteryInfo), className, queryObj);
+                        //typeof(BatteryInfo).GetField(className, BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, queryObj);
                     }
                 }
             }
@@ -35,7 +53,7 @@ namespace BatMan
         // BatteryStatus class properties
         public static bool PowerOnline
         {
-            get { return (bool)BatteryStatus.GetPropertyValue(MethodBase.GetCurrentMethod().Name.Substring(4)); }
+            get { return SystemInformation.PowerStatus.PowerLineStatus == PowerLineStatus.Online; }
         }
         public static bool Charging
         {
@@ -84,11 +102,11 @@ namespace BatMan
 
         #endregion
 
-        #region Properties (countable)
+        #region Properties (calculated)
 
         public static double WearPercents
         {
-            get { return 100.0 * (DesignedCapacity - FullChargedCapacity) / DesignedCapacity; }
+            get { return 100.0 * (1 + FullChargedCapacity / DesignedCapacity); }
         }
 
         public static double Percents
@@ -98,12 +116,37 @@ namespace BatMan
 
         public static TimeSpan DischargeTimeLeft
         {
-            get { return Discharging ? TimeSpan.FromHours((double)RemainingCapacity / DischargeRate) : TimeSpan.Zero; }
+            get
+            {
+                try
+                {
+                    return Discharging ? TimeSpan.FromHours((Percents - OffPercent) / 100 * FullChargedCapacity / DischargeRate) : TimeSpan.Zero;
+                }
+                catch (OverflowException)
+                {
+                    return TimeSpan.Zero;
+                }
+            }
         }
 
         public static TimeSpan ChargeTimeLeft
         {
-            get { return Charging ? TimeSpan.FromHours((double)(FullChargedCapacity - RemainingCapacity) / ChargeRate) : TimeSpan.Zero; }
+            get
+            {
+                try
+                {
+                    return Charging ? TimeSpan.FromHours((double)(FullChargedCapacity - RemainingCapacity) / ChargeRate) : TimeSpan.Zero;
+                }
+                catch (OverflowException)
+                {
+                    return TimeSpan.Zero;
+                }
+            }
+        }
+
+        public static TimeSpan TimeLeft
+        {
+            get { return Discharging ? DischargeTimeLeft : ChargeTimeLeft; }
         }
 
         #endregion
