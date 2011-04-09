@@ -1,16 +1,9 @@
 ﻿
 using System;
 using System.Management;
-using System.Threading;
-using ReflectionFacade;
 using System.Reflection;
-using System.Windows.Forms;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+using System.Windows;
+using ReflectionFacade;
 
 namespace BatMan
 {
@@ -39,11 +32,13 @@ namespace BatMan
                 var query = new ObjectQuery("SELECT * FROM " + className);
                 using (var searcher = new ManagementObjectSearcher(scope, query))
                 {
-                    foreach (ManagementObject queryObj in searcher.Get())
+                    var en = searcher.Get().GetEnumerator();
+                    en.MoveNext();
+                    Reflector.StaticSetField(typeof(BatteryInfo), className, en.Current);
+                    /*foreach (ManagementObject queryObj in searcher.Get())
                     {
                         Reflector.StaticSetField(typeof(BatteryInfo), className, queryObj);
-                        //typeof(BatteryInfo).GetField(className, BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, queryObj);
-                    }
+                    }*/
                 }
             }
         }
@@ -53,51 +48,51 @@ namespace BatMan
         // BatteryStatus class properties
         public static bool PowerOnline
         {
-            get { return SystemInformation.PowerStatus.PowerLineStatus == PowerLineStatus.Online; }
+            get { return SystemParameters.PowerLineStatus == PowerLineStatus.Online; }
         }
         public static bool Charging
         {
-            get { return (bool)BatteryStatus.GetPropertyValue(MethodBase.GetCurrentMethod().Name.Substring(4)); }
+            get { return (bool)BatteryStatus.GetPropertyValue("Charging"); }
         }
         public static int ChargeRate
         {
-            get { return (int)BatteryStatus.GetPropertyValue(MethodBase.GetCurrentMethod().Name.Substring(4)); }
+            get { return (int)BatteryStatus.GetPropertyValue("ChargeRate"); }
         }
         public static bool Discharging
         {
-            get { return (bool)BatteryStatus.GetPropertyValue(MethodBase.GetCurrentMethod().Name.Substring(4)); }
+            get { return !PowerOnline; }
         }
         public static int DischargeRate
         {
-            get { return (int)BatteryStatus.GetPropertyValue(MethodBase.GetCurrentMethod().Name.Substring(4)); }
+            get { return (int)BatteryStatus.GetPropertyValue("DischargeRate"); }
         }
         public static uint RemainingCapacity
         {
-            get { return (uint)BatteryStatus.GetPropertyValue(MethodBase.GetCurrentMethod().Name.Substring(4)); }
+            get { return (uint)BatteryStatus.GetPropertyValue("RemainingCapacity"); }
         }
         public static uint Voltage
         {
-            get { return (uint)BatteryStatus.GetPropertyValue(MethodBase.GetCurrentMethod().Name.Substring(4)); }
+            get { return (uint)BatteryStatus.GetPropertyValue("Voltage"); }
         }
 
         // BatteryFullChargedCapacity class properties
         public static uint FullChargedCapacity
         {
-            get { return (uint)BatteryFullChargedCapacity.GetPropertyValue(MethodBase.GetCurrentMethod().Name.Substring(4)); }
+            get { return (uint)BatteryFullChargedCapacity.GetPropertyValue("FullChargedCapacity"); }
         }
 
         // BatteryStaticData class properties
         public static uint DesignedCapacity
         {
-            get { return (uint)BatteryStaticData.GetPropertyValue(MethodBase.GetCurrentMethod().Name.Substring(4)); }
+            get { return (uint)BatteryStaticData.GetPropertyValue("DesignedCapacity"); }
         }
         public static string DeviceName
         {
-            get { return (string)BatteryStaticData.GetPropertyValue(MethodBase.GetCurrentMethod().Name.Substring(4)); }
+            get { return (string)BatteryStaticData.GetPropertyValue("DeviceName"); }
         }
         public static string ManufactureName
         {
-            get { return (string)BatteryStaticData.GetPropertyValue(MethodBase.GetCurrentMethod().Name.Substring(4)); }
+            get { return (string)BatteryStaticData.GetPropertyValue("ManufactureName"); }
         }
 
         #endregion

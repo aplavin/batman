@@ -2,7 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:tb="http://www.hardcodet.net/taskbar"
-        Title="BatMan" Height="113" Width="218" ResizeMode="NoResize" WindowStyle="ToolWindow" Left="-1000" Top="-1000">
+        Title="BatMan" Height="113" Width="218" ResizeMode="NoResize" WindowStyle="ToolWindow" Left="-1000" Top="-1000"
+        Closing="Window_Closing">
 
 
     <Window.Background>
@@ -25,7 +26,7 @@
                         <MenuItem Name="p1" Tag="SCHEME_BALANCED" Header="Сбалансированный" Click="SetProfile"/>
                         <MenuItem Name="p2" Tag="SCHEME_MIN" Header="Высокая производительность" Click="SetProfile"/>
                     </MenuItem>
-                    <MenuItem Name="AutoProfile" Header="Автоматическое переключение профилей" IsCheckable="True"/>
+                    <MenuItem Name="AutoProfile" Header="Автоматическое переключение профилей" IsCheckable="True" Checked="AutoProfile_Checked" Unchecked="AutoProfile_Checked"/>
                     <Separator/>
                     <MenuItem Header="Отображение на панели задач">
                         <MenuItem Name="i0" Tag="0" Header="Всегда" Click="SetTaskbarShow"/>
@@ -35,11 +36,14 @@
                     </MenuItem>
                     <MenuItem Header="Время между обновлениями">
                         <MenuItem Name="t0" Tag="1" Header="1 секунда" Click="SetTime"/>
-                        <MenuItem Name="t1" Tag="5" Header="5 секунд" IsChecked="True" Click="SetTime"/>
+                        <MenuItem Name="t1" Tag="5" Header="5 секунд" Click="SetTime"/>
                         <MenuItem Name="t2" Tag="10" Header="10 секунд" Click="SetTime"/>
                         <MenuItem Name="t3" Tag="30" Header="30 секунд" Click="SetTime"/>
                         <MenuItem Name="t4" Tag="60" Header="1 минута" Click="SetTime"/>
                     </MenuItem>
+                    <MenuItem Name="Autorun"  Header="Автозапуск" IsCheckable="True" Checked="Autorun_Checked" Unchecked="Autorun_Checked"/>
+                    <Separator/>
+                    <MenuItem Header="Выход" Click="Exit_Click"/>
                 </ContextMenu>
             </tb:TaskbarIcon.ContextMenu>
             <tb:TaskbarIcon.TrayToolTip>

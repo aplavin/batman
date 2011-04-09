@@ -1,13 +1,14 @@
 ﻿
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
 using System.Windows.Threading;
-using System.Diagnostics;
 using Microsoft.Win32;
+using BatMan.Properties;
 
 namespace BatMan
 {
@@ -22,26 +23,36 @@ namespace BatMan
 #endif
 
         private DispatcherTimer dispatcherTimer;
-        private int RefreshRate = 5;
 
-        private enum ShowMode { Always, PowerOff, PowerOn, Never };
-        private ShowMode showMode = ShowMode.PowerOff;
+        public enum ShowMode { Always, PowerOff, PowerOn, Never };
+        private ShowMode showMode = (ShowMode)Settings.Default.TaskbarShow;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(PowerModeChanged);
+            Autorun.IsChecked = Settings.Default.Autorun;
+            AutoProfile.IsChecked = Settings.Default.AutoProfile;
 
-            if (TaskbarItemInfo == null)
-                TaskbarItemInfo = new TaskbarItemInfo();
-
-            dispatcherTimer = new DispatcherTimer();
-            dispatcherTimer.Tick += new EventHandler(UpdateState);
-            dispatcherTimer.Interval = TimeSpan.FromSeconds(DEBUG ? 1 : RefreshRate);
-            dispatcherTimer.Start();
-
-            UpdateState();
+            int r = Settings.Default.RefreshInterval;
+            switch (r)
+            {
+                case 1:
+                    t0.IsChecked = true;
+                    break;
+                case 5:
+                    t1.IsChecked = true;
+                    break;
+                case 10:
+                    t2.IsChecked = true;
+                    break;
+                case 30:
+                    t3.IsChecked = true;
+                    break;
+                case 60:
+                    t4.IsChecked = true;
+                    break;
+            }
 
             // Change relative icon paths to absolute
             foreach (JumpTask task in JumpList.GetJumpList(App.Current).JumpItems)
@@ -52,6 +63,19 @@ namespace BatMan
                 }
             }
             JumpList.GetJumpList(App.Current).Apply();
+
+            SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(PowerModeChanged);
+
+            if (TaskbarItemInfo == null)
+                TaskbarItemInfo = new TaskbarItemInfo();
+
+            dispatcherTimer = new DispatcherTimer();
+            dispatcherTimer.Tick += new EventHandler(UpdateState);
+            dispatcherTimer.Interval = TimeSpan.FromSeconds(DEBUG ? 1 : Settings.Default.RefreshInterval);
+            dispatcherTimer.Start();
+
+            UpdateState();
+            UpdateTaskbarShow();
         }
 
         private void UpdateState(object sender = null, EventArgs e = null)
@@ -116,8 +140,9 @@ namespace BatMan
             }
 
             int secs = int.Parse((sender as MenuItem).Tag as string);
-            RefreshRate = secs;
             dispatcherTimer.Interval = TimeSpan.FromSeconds(secs);
+
+            Settings.Default.RefreshInterval = secs;
 
             t0.IsChecked = t1.IsChecked = t2.IsChecked = t3.IsChecked = t4.IsChecked = false;
             (sender as MenuItem).IsChecked = true;
@@ -131,7 +156,13 @@ namespace BatMan
             }
 
             showMode = (ShowMode)int.Parse((sender as MenuItem).Tag as string);
+            Settings.Default.TaskbarShow = (int)showMode;
 
+            UpdateTaskbarShow();
+        }
+
+        private void UpdateTaskbarShow()
+        {
             if (ShowTaskbar(BatteryInfo.PowerOnline))
             {
                 Show();
@@ -179,15 +210,29 @@ namespace BatMan
                 }
             }
 
+            UpdateTaskbarShow();
+        }
 
-            if (ShowTaskbar(powerOn))
-            {
-                Show();
-            }
-            else
-            {
-                Hide();
-            }
+        private void Autorun_Checked(object sender, RoutedEventArgs e)
+        {
+            Settings.Default.Autorun = Autorun.IsChecked;
+            AutoRun.Enabled = Autorun.IsChecked;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            Settings.Default.Save();
+            App.Current.Shutdown();
+        }
+
+        private void AutoProfile_Checked(object sender, RoutedEventArgs e)
+        {
+            Settings.Default.AutoProfile = AutoProfile.IsChecked;
         }
 
     }
