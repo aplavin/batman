@@ -18,11 +18,10 @@ namespace BatMan
 
         static BatteryInfo()
         {
-            //Update(null);
-            //Timer t = new Timer(Update, null, 0, 5000);
+            Update();
         }
 
-        public static void Update(object state)
+        public static void Update()
         {
             var scope = new ManagementScope("\\\\.\\root\\WMI");
             scope.Connect();
@@ -35,10 +34,6 @@ namespace BatMan
                     var en = searcher.Get().GetEnumerator();
                     en.MoveNext();
                     Reflector.StaticSetField(typeof(BatteryInfo), className, en.Current);
-                    /*foreach (ManagementObject queryObj in searcher.Get())
-                    {
-                        Reflector.StaticSetField(typeof(BatteryInfo), className, queryObj);
-                    }*/
                 }
             }
         }
@@ -101,7 +96,7 @@ namespace BatMan
 
         public static double WearPercents
         {
-            get { return 100.0 * (1 + FullChargedCapacity / DesignedCapacity); }
+            get { return 100.0 * (1 - (double)FullChargedCapacity / DesignedCapacity); }
         }
 
         public static double Percents
