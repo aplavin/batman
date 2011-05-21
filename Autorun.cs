@@ -7,7 +7,7 @@ using Microsoft.Win32;
 
 namespace BatMan
 {
-    class AutoRun
+    static class AutoRun
     {
         /// <summary>
         /// Full name of starting application (Shortcut)

@@ -60,6 +60,7 @@
                         <Label HorizontalAlignment="Left" Margin="0,18,0,0" Name="TimeLabelTray" VerticalAlignment="Top" Content="Оставшееся время: --:--" FontSize="14"/>
                         <Label HorizontalAlignment="Left" Margin="0,35,0,0" Name="CapacityLabelTray" VerticalAlignment="Top" Content="Ёмкость: --.- Вт*ч из --.- Вт*ч" FontSize="14"/>
                         <Label HorizontalAlignment="Left" Margin="0,53,0,0" Name="PowerLabelTray" VerticalAlignment="Top" Content="Разрядка: --.- Вт" FontSize="14"/>
+                        <Label HorizontalAlignment="Left" Margin="0,53,0,0" Name="WearPercentLabelTray" VerticalAlignment="Top" Content="Износ: --%" FontSize="14"/>
                     </Grid>
                 </Border>
             </tb:TaskbarIcon.TrayToolTip>

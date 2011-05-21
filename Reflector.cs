@@ -117,7 +117,7 @@ namespace ReflectionFacade
         public static object StaticCallMethod(Type type, string memberName, params object[] args)
         {
             return Reflector.InvokeMember(
-                type, null, null,
+                type, null, memberName,
                 Reflector.CommonFlags | BindingFlags.InvokeMethod | BindingFlags.Static, args);
         }
 

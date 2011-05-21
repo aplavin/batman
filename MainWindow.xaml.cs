@@ -188,6 +188,7 @@ namespace BatMan
             TimeLabelTray.Content = TimeLabel.Content;
             CapacityLabelTray.Content = CapacityLabel.Content;
             PowerLabelTray.Content = PowerLabel.Content;
+            WearPercentLabelTray.Content = WearLevelLabel.Content;
         }
 
         private void SetTime(object sender, RoutedEventArgs e)
